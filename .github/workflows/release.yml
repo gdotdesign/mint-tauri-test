@@ -9,7 +9,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [macos-latest, ubuntu-latest, windows-latest]
+        platform: [macos-latest, ubuntu-latest]
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -47,7 +47,7 @@ jobs:
       run: mint build
       working-directory: ./app
 
-    - uses: tauri-apps/tauri-action@v0
+    - uses: tauri-apps/tauri-action@v0.1.1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
