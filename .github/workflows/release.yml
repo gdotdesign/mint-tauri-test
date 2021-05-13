@@ -5,13 +5,32 @@ on:
       - master
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install dependencies
+        run: mint install
+        working-directory: ./app
+
+      - name: Build
+        run: mint build
+        working-directory: ./app
+
+      - uses: actions/upload-artifact@master
+        with:
+          name: app
+          path: app/dist
+
   publish:
+    runs-on: ${{ matrix.platform }}
+    needs: build
+
     strategy:
       fail-fast: false
       matrix:
         platform: [macos-latest, ubuntu-latest]
 
-    runs-on: ${{ matrix.platform }}
     steps:
     - uses: actions/checkout@v2
 
@@ -34,18 +53,10 @@ jobs:
     - name: install app dependencies and build it
       run: yarn
 
-    - name: Install Mint
-      uses: fabasoad/setup-mint-action@main
+    - uses: actions/download-artifact@master
       with:
-        version: 0.12.0
-
-    - name: Install dependencies
-      run: mint install
-      working-directory: ./app
-
-    - name: Build
-      run: mint build
-      working-directory: ./app
+        name: app
+        path: app/dist
 
     - uses: tauri-apps/tauri-action@dev
       env:
